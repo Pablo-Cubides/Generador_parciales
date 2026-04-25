@@ -1,20 +1,44 @@
-# Secrets
+# ── Secrets ──────────────────────────────────────────────────
 .env
+.env.local
 
-# Workspace and temporary files
+# ── Workspace (material y exámenes reales no se versionan) ───
 workspace/raw_material/*
 workspace/generated_exams/*
 !workspace/raw_material/.gitkeep
 !workspace/generated_exams/.gitkeep
 
-# Python
+# ── Logs ──────────────────────────────────────────────────────
+logs/*.log
+!logs/.gitkeep
+
+# ── Python ────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
+*.pyo
 .venv/
 venv/
+env/
+*.egg-info/
+dist/
+build/
+.eggs/
 
-# Logs
-*.log
+# ── Testing y cobertura ───────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
 
-# Scratch
+# ── IDEs ──────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Scratch ───────────────────────────────────────────────────
 scratch/
