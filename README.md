@@ -1,6 +1,6 @@
 # 🎓 Generador de Parciales AI - Agentic Workflow
 
-Un sistema profesional de grado ingeniería para la gestión, generación y calificación de exámenes universitarios, diseñado para ser operado por **Agentes de IA** (como Antigravity, Claude Code o OpenHands).
+Un sistema profesional de grado ingeniería para la gestión, generación y calificación de exámenes universitarios, diseñado para ser operado por **Agentes de IA** (como Antigravity, Claude Code o OpenClaw).
 
 Este proyecto no es una simple aplicación; es un **ecosistema de trabajo agéntico** que utiliza IA para procesar libros de texto, generar bancos de preguntas técnicos, armar exámenes únicos con permutación de opciones y calificar automáticamente mediante visión artificial.
 
@@ -58,13 +58,26 @@ pip install supabase python-dotenv python-docx
 ```
 
 ### 3. Base de Datos (Supabase)
-Ejecuta el script SQL ubicado en `scripts/schema.sql` dentro del **SQL Editor** de tu panel de Supabase. Esto creará las tablas de Sesiones, Banco de Preguntas, Exámenes y Notas.
+Ejecuta el script SQL ubicado en `scripts/schema.sql` dentro del **SQL Editor** de tu panel de Supabase.
 
-### 4. Variables de Entorno
+**Detalles de conexión:**
+- **Host:** `db.wuyndjgycejlcpotgwzx.supabase.co`
+- **Database:** `postgres`
+- **User:** `postgres`
+
+### 4. Variables de Env (Agent Skills)
+He instalado los `supabase/agent-skills` para mejorar la precisión. Si cambias de entorno, puedes ejecutar:
+```bash
+npx skills add supabase/agent-skills -y
+```
+
+### 5. Variables de Entorno
 Crea un archivo `.env` en la raíz basado en `.env.example`:
 ```env
-SUPABASE_URL=tu_url_de_supabase
+SUPABASE_URL=https://wuyndjgycejlcpotgwzx.supabase.co
 SUPABASE_KEY=tu_anon_public_key
+# Connection string para scripts directos
+DATABASE_URL=postgresql://postgres:[PASSWORD]@db.wuyndjgycejlcpotgwzx.supabase.co:5432/postgres
 ```
 
 ---
