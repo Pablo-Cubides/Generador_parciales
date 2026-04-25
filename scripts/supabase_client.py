@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import os
 from typing import Any
 
@@ -19,16 +18,6 @@ if not _url or not _key:
     raise ValueError("Faltan SUPABASE_URL o SUPABASE_KEY en las variables de entorno.")
 
 supabase: Client = create_client(_url, _key)
-
-_STUDENT_PEPPER: str = os.environ.get("STUDENT_PEPPER", "generador-parciales-pepper")
-
-
-# ── Utilidades ────────────────────────────────────────────────────────────────
-
-def hash_student_id(student_id: str) -> str:
-    """Devuelve sha256(student_id + pepper) para almacenar sin exponer PII."""
-    raw = f"{student_id}{_STUDENT_PEPPER}"
-    return hashlib.sha256(raw.encode()).hexdigest()
 
 
 # ── Cursos ────────────────────────────────────────────────────────────────────
@@ -204,18 +193,6 @@ def get_answer_key(exam_id: str) -> list[dict[str, Any]]:
     return result.data
 
 
-# ── Estudiantes (pseudonimizados) ─────────────────────────────────────────────
-
-def get_or_create_student(student_id: str, course_id: str | None = None) -> dict[str, Any]:
-    student_hash = hash_student_id(student_id)
-    result = supabase.table("students").select("*").eq("student_hash", student_hash).execute()
-    if result.data:
-        return result.data[0]
-    data: dict[str, Any] = {"student_hash": student_hash, "course_id": course_id}
-    result = supabase.table("students").insert(data).execute()
-    return result.data[0]
-
-
 # ── Calificaciones ────────────────────────────────────────────────────────────
 
 def save_grade(
@@ -228,9 +205,8 @@ def save_grade(
     raw_data: dict,
     needs_review: bool = False,
 ) -> dict[str, Any]:
-    student_hash = hash_student_id(student_id)
     data = {
-        "student_hash": student_hash,
+        "student_id": student_id,
         "exam_id": exam_id,
         "score": round(score, 1),
         "correct_count": correct_count,
@@ -241,10 +217,7 @@ def save_grade(
     }
     result = supabase.table("grades").insert(data).execute()
     grade = result.data[0]
-    logger.info(
-        f"Nota guardada: student_hash={student_hash[:8]}… "
-        f"exam={exam_id} score={score} review={needs_review}"
-    )
+    logger.info(f"Nota guardada: student={student_id} exam={exam_id} score={score} review={needs_review}")
     return grade
 
 

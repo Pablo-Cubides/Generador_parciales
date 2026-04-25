@@ -47,35 +47,6 @@ class TestShuffledMap:
         assert m1 != m2
 
 
-class TestStudentHash:
-    def test_hash_deterministic(self):
-        from scripts.supabase_client import hash_student_id
-
-        # Mismo student_id + mismo pepper → mismo hash
-        h1 = hash_student_id("12345")
-        h2 = hash_student_id("12345")
-        assert h1 == h2
-
-    def test_hash_different_ids(self):
-        from scripts.supabase_client import hash_student_id
-
-        assert hash_student_id("12345") != hash_student_id("12346")
-
-    def test_hash_length(self):
-        from scripts.supabase_client import hash_student_id
-
-        h = hash_student_id("any_student")
-        assert len(h) == 64  # SHA-256 en hex = 64 caracteres
-
-    def test_hash_no_plain_id(self):
-        """El hash no debe contener el student_id en texto plano."""
-        from scripts.supabase_client import hash_student_id
-
-        student_id = "202310500"
-        h = hash_student_id(student_id)
-        assert student_id not in h
-
-
 class TestAnalyticsFlags:
     def test_too_easy_threshold(self):
         items = [

@@ -174,23 +174,11 @@ create table if not exists public.answer_keys (
 create index if not exists ak_exam_id_idx     on public.answer_keys (exam_id);
 create index if not exists ak_question_id_idx on public.answer_keys (question_id);
 
--- ── Tabla: students ──────────────────────────────────────────
--- student_id real NUNCA se guarda en texto plano
-create table if not exists public.students (
-  id           uuid primary key default gen_random_uuid(),
-  created_at   timestamptz default now() not null,
-  course_id    uuid references public.courses(id) on delete cascade,
-  student_hash text unique not null  -- sha256(student_id + pepper)
-);
-
-create index if not exists students_course_id_idx   on public.students (course_id);
-create index if not exists students_hash_idx        on public.students (student_hash);
-
 -- ── Tabla: grades ────────────────────────────────────────────
 create table if not exists public.grades (
   id                uuid primary key default gen_random_uuid(),
   created_at        timestamptz default now() not null,
-  student_hash      text not null references public.students(student_hash),
+  student_id        text not null,  -- código del estudiante en texto plano
   exam_id           uuid references public.exams(id) not null,
   score             numeric(3,1) check (score between 0 and 5),
   correct_count     integer,
@@ -200,8 +188,8 @@ create table if not exists public.grades (
   raw_vision_data   jsonb
 );
 
-create index if not exists grades_exam_id_idx     on public.grades (exam_id);
-create index if not exists grades_student_hash_idx on public.grades (student_hash);
+create index if not exists grades_exam_id_idx    on public.grades (exam_id);
+create index if not exists grades_student_id_idx on public.grades (student_id);
 
 -- ── Tabla: responses ─────────────────────────────────────────
 -- Respuesta granular por pregunta (reemplaza el placeholder en analytics)
@@ -226,7 +214,6 @@ alter table public.rag_sources   enable row level security;
 alter table public.question_bank enable row level security;
 alter table public.exams         enable row level security;
 alter table public.answer_keys   enable row level security;
-alter table public.students      enable row level security;
 alter table public.grades        enable row level security;
 alter table public.responses     enable row level security;
 
@@ -270,14 +257,6 @@ create policy "answer_keys_via_exam" on public.answer_keys
   using (exists (
     select 1 from public.exams e
     where e.id = exam_id and e.instructor_id = auth.uid()
-  ));
-
--- students: acceso vía propiedad del curso
-drop policy if exists "students_via_course" on public.students;
-create policy "students_via_course" on public.students
-  using (exists (
-    select 1 from public.courses c
-    where c.id = course_id and c.instructor_id = auth.uid()
   ));
 
 -- grades: acceso vía propiedad del examen

@@ -2,11 +2,17 @@
 .env
 .env.local
 
-# ── Workspace (material y exámenes reales no se versionan) ───
+# ── Workspace (NUNCA subir material real ni resultados) ───────
 workspace/raw_material/*
 workspace/generated_exams/*
 !workspace/raw_material/.gitkeep
 !workspace/generated_exams/.gitkeep
+
+# Archivos de notas, reportes y exámenes generados ────────────
+*.csv
+*.docx
+*.pdf
+*.xlsx
 
 # ── Logs ──────────────────────────────────────────────────────
 logs/*.log

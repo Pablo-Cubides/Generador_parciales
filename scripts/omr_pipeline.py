@@ -37,7 +37,6 @@ from PIL import Image
 from scripts.supabase_client import (
     get_answer_key,
     get_exam_by_code,
-    get_or_create_student,
     refresh_question_stats,
     save_grade,
     save_responses,
@@ -311,8 +310,6 @@ def _grade_against_db(
     total = len(answer_keys)
     responses_to_save: list[dict[str, Any]] = []
     needs_review = omr.needs_review
-
-    student = get_or_create_student(omr.student_id, course_id=exam.get("course_id"))
 
     for cell in omr.cells:
         order_idx = cell.q_index - 1  # 0-based
